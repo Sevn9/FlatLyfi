@@ -1,0 +1,13 @@
+Copyright (c) 2025, Sevn9. All rights reserved.
+
+This software is licensed, not sold. You are granted a non-exclusive, non-transferable license to use this software 
+solely for personal or internal business purposes, in accordance with the terms of your purchase or agreement.
+
+You may not:
+- Copy, modify, or distribute the software or any part of it;
+- Reverse engineer, decompile, or disassemble the software;
+- Make the software available to third parties without written permission.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE 
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR 
+OTHER DEALINGS IN THE SOFTWARE.

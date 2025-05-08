@@ -55,13 +55,6 @@ var webHooksApi = builder.AddProject<Projects.Webhooks_API>("webhooks-api")
     .WithReference(webhooksDb)
     .WithEnvironment("Identity__Url", identityEndpoint);
 
-// Reverse proxies
-builder.AddProject<Projects.Mobile_Bff_Shopping>("mobile-bff")
-    .WithReference(catalogApi)
-    .WithReference(orderingApi)
-    .WithReference(basketApi)
-    .WithReference(identityApi);
-
 // Apps
 var webhooksClient = builder.AddProject<Projects.WebhookClient>("webhooksclient", launchProfileName)
     .WithReference(webHooksApi)

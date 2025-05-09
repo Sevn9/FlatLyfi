@@ -12,7 +12,6 @@
       "src\\Ordering.API\\Ordering.API.csproj",
       "src\\Ordering.Domain\\Ordering.Domain.csproj",
       "src\\Ordering.Infrastructure\\Ordering.Infrastructure.csproj",
-      "src\\PaymentProcessor\\PaymentProcessor.csproj",
       "src\\WebAppComponents\\WebAppComponents.csproj",
       "src\\WebApp\\WebApp.csproj",
       "src\\WebhookClient\\WebhookClient.csproj",

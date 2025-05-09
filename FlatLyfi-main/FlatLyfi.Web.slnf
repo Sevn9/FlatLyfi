@@ -8,10 +8,6 @@
       "src\\EventBus\\EventBus.csproj",
       "src\\Identity.API\\Identity.API.csproj",
       "src\\IntegrationEventLogEF\\IntegrationEventLogEF.csproj",
-      "src\\OrderProcessor\\OrderProcessor.csproj",
-      "src\\Ordering.API\\Ordering.API.csproj",
-      "src\\Ordering.Domain\\Ordering.Domain.csproj",
-      "src\\Ordering.Infrastructure\\Ordering.Infrastructure.csproj",
       "src\\WebAppComponents\\WebAppComponents.csproj",
       "src\\WebApp\\WebApp.csproj",
       "src\\WebhookClient\\WebhookClient.csproj",
@@ -19,9 +15,7 @@
       "src\\eShop.AppHost\\FlatLyfi.AppHost.csproj",
       "src\\eShop.ServiceDefaults\\FlatLyfi.ServiceDefaults.csproj",
       "tests\\Basket.UnitTests\\Basket.UnitTests.csproj",
-      "tests\\Catalog.FunctionalTests\\Catalog.FunctionalTests.csproj",
-      "tests\\Ordering.FunctionalTests\\Ordering.FunctionalTests.csproj",
-      "tests\\Ordering.UnitTests\\Ordering.UnitTests.csproj"
+      "tests\\Catalog.FunctionalTests\\Catalog.FunctionalTests.csproj"
     ]
   }
 }

@@ -9,7 +9,8 @@ public record CatalogItem(
     int CatalogBrandId,
     CatalogBrand CatalogBrand,
     int CatalogTypeId,
-    CatalogItemType CatalogType);
+    CatalogItemType CatalogType,
+    string Link);
 
 public record CatalogResult(int PageIndex, int PageSize, int Count, List<CatalogItem> Data);
 public record CatalogBrand(int Id, string Brand);

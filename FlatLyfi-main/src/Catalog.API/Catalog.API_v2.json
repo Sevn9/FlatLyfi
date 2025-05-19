@@ -664,6 +664,9 @@
           "description": {
             "type": "string"
           },
+          "link": {
+            "type": "string"
+          },
           "price": {
             "type": "number",
             "format": "double"

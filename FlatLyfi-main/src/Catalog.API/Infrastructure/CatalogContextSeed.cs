@@ -53,6 +53,8 @@ public partial class CatalogContextSeed(
                 MaxStockThreshold = 200,
                 RestockThreshold = 10,
                 PictureFileName = $"{source.Id}.webp",
+
+                Link = source.Link
             }).ToArray();
 
             if (catalogAI.IsEnabled)
@@ -64,7 +66,7 @@ public partial class CatalogContextSeed(
                     catalogItems[i].Embedding = embeddings[i];
                 }
             }
-
+            
             await context.CatalogItems.AddRangeAsync(catalogItems);
             logger.LogInformation("Seeded catalog with {NumItems} items", context.CatalogItems.Count());
             await context.SaveChangesAsync();
@@ -79,5 +81,7 @@ public partial class CatalogContextSeed(
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
+
+        public string Link { get; set; }
     }
 }

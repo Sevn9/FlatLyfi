@@ -863,6 +863,69 @@
           "link": {
             "type": "string"
           },
+          "region": {
+            "type": "string"
+          },
+          "town": {
+            "type": "string"
+          },
+          "metro": {
+            "type": "string"
+          },
+          "timeToTheMetro": {
+            "type": "string"
+          },
+          "address": {
+            "type": "string"
+          },
+          "numberOfRooms": {
+            "type": "string"
+          },
+          "totalFloorArea": {
+            "type": "string"
+          },
+          "kitchenArea": {
+            "type": "string"
+          },
+          "floor": {
+            "type": "string"
+          },
+          "livingArea": {
+            "type": "string"
+          },
+          "bathroom": {
+            "type": "string"
+          },
+          "repair": {
+            "type": "string"
+          },
+          "furniture": {
+            "type": "string"
+          },
+          "technique": {
+            "type": "string"
+          },
+          "houseType": {
+            "type": "string"
+          },
+          "internetAndTV": {
+            "type": "string"
+          },
+          "yearBuilt": {
+            "type": "string"
+          },
+          "floorsInTheHouse": {
+            "type": "string"
+          },
+          "passengerElevator": {
+            "type": "string"
+          },
+          "freightElevator": {
+            "type": "string"
+          },
+          "parking": {
+            "type": "string"
+          },
           "price": {
             "type": "number",
             "format": "double"

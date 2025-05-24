@@ -373,7 +373,29 @@ public static class CatalogApi
             RestockThreshold = product.RestockThreshold,
             MaxStockThreshold = product.MaxStockThreshold,
 
-            Link = product.Link
+            Link = product.Link,
+            Region = product.Region,
+            Town = product.Town,
+            Metro = product.Metro,
+            TimeToTheMetro = product.TimeToTheMetro,
+            Address = product.Address,
+            NumberOfRooms = product.NumberOfRooms,
+            TotalFloorArea = product.TotalFloorArea,
+            KitchenArea = product.KitchenArea,
+            Floor = product.Floor,
+            LivingArea = product.LivingArea,
+            Bathroom = product.Bathroom,
+            Repair = product.Repair,
+            Furniture = product.Furniture,
+            Technique = product.Technique,
+            HouseType = product.HouseType,
+            InternetAndTV = product.InternetAndTV,
+            YearBuilt = product.YearBuilt,
+            FloorsInTheHouse = product.FloorsInTheHouse,
+            PassengerElevator = product.PassengerElevator,
+            FreightElevator = product.FreightElevator,
+            Parking = product.Parking,
+
         };
         item.Embedding = await services.CatalogAI.GetEmbeddingAsync(item);
 

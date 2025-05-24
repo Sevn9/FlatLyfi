@@ -10,7 +10,28 @@ public record CatalogItem(
     CatalogBrand CatalogBrand,
     int CatalogTypeId,
     CatalogItemType CatalogType,
-    string Link);
+    string Link,
+    string Region,
+    string Town,
+    string Metro,
+    string TimeToTheMetro,
+    string Address,
+    string NumberOfRooms,
+    string TotalFloorArea,
+    string KitchenArea,
+    string Floor,
+    string LivingArea,
+    string Bathroom,
+    string Repair,
+    string Furniture,
+    string Technique,
+    string HouseType,
+    string InternetAndTV,
+    string YearBuilt,
+    string FloorsInTheHouse,
+    string PassengerElevator,
+    string FreightElevator,
+    string Parking);
 
 public record CatalogResult(int PageIndex, int PageSize, int Count, List<CatalogItem> Data);
 public record CatalogBrand(int Id, string Brand);

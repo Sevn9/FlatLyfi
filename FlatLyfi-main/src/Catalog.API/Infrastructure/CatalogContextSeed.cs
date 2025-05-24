@@ -76,6 +76,8 @@ public partial class CatalogContextSeed(
                 PassengerElevator = source.PassengerElevator,
                 FreightElevator = source.FreightElevator,
                 Parking = source.Parking,
+                Longitude = source.Longitude,
+                Latitude = source.Latitude,
             }).ToArray();
 
             if (catalogAI.IsEnabled)
@@ -146,5 +148,9 @@ public partial class CatalogContextSeed(
         public string FreightElevator { get; set; }
 
         public string Parking { get; set; }
+
+        public decimal Longitude { get; set; }
+
+        public decimal Latitude { get; set; }
     }
 }

@@ -37,7 +37,9 @@
         "FloorsInTheHouse": "10",
         "PassengerElevator": "1",
         "FreightElevator": "Нет",
-        "Parking": "Открытая во дворе"
+        "Parking": "Открытая во дворе",
+        "Longitude": 48.8866527839977,
+        "Latitude": 2.34310679732974
     },
   {
     "Id": 2,

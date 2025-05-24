@@ -395,8 +395,9 @@ public static class CatalogApi
             PassengerElevator = product.PassengerElevator,
             FreightElevator = product.FreightElevator,
             Parking = product.Parking,
-
-        };
+            Longitude = product.Longitude,
+            Latitude = product.Latitude
+};
         item.Embedding = await services.CatalogAI.GetEmbeddingAsync(item);
 
         services.Context.CatalogItems.Add(item);

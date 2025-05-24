@@ -2,6 +2,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using Pgvector;
@@ -12,9 +13,11 @@ using eShop.Catalog.API.Infrastructure;
 namespace eShop.Catalog.API.Infrastructure.Migrations
 {
     [DbContext(typeof(CatalogContext))]
-    partial class CatalogContextModelSnapshot : ModelSnapshot
+    [Migration("20250519010045_AddedLinkColumnToCatalogItem")]
+    partial class AddedLinkColumnToCatalogItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -50,14 +53,8 @@ namespace eShop.Catalog.API.Infrastructure.Migrations
 
                     NpgsqlPropertyBuilderExtensions.UseIdentityByDefaultColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("Address")
-                        .HasColumnType("text");
-
                     b.Property<int>("AvailableStock")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Bathroom")
-                        .HasColumnType("text");
 
                     b.Property<int>("CatalogBrandId")
                         .HasColumnType("integer");
@@ -71,55 +68,19 @@ namespace eShop.Catalog.API.Infrastructure.Migrations
                     b.Property<Vector>("Embedding")
                         .HasColumnType("vector(384)");
 
-                    b.Property<string>("Floor")
-                        .HasColumnType("text");
-
-                    b.Property<string>("FloorsInTheHouse")
-                        .HasColumnType("text");
-
-                    b.Property<string>("FreightElevator")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Furniture")
-                        .HasColumnType("text");
-
-                    b.Property<string>("HouseType")
-                        .HasColumnType("text");
-
-                    b.Property<string>("InternetAndTV")
-                        .HasColumnType("text");
-
-                    b.Property<string>("KitchenArea")
-                        .HasColumnType("text");
-
                     b.Property<string>("Link")
-                        .HasColumnType("text");
-
-                    b.Property<string>("LivingArea")
                         .HasColumnType("text");
 
                     b.Property<int>("MaxStockThreshold")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Metro")
-                        .HasColumnType("text");
 
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(50)
                         .HasColumnType("character varying(50)");
 
-                    b.Property<string>("NumberOfRooms")
-                        .HasColumnType("text");
-
                     b.Property<bool>("OnReorder")
                         .HasColumnType("boolean");
-
-                    b.Property<string>("Parking")
-                        .HasColumnType("text");
-
-                    b.Property<string>("PassengerElevator")
-                        .HasColumnType("text");
 
                     b.Property<string>("PictureFileName")
                         .HasColumnType("text");
@@ -127,29 +88,8 @@ namespace eShop.Catalog.API.Infrastructure.Migrations
                     b.Property<decimal>("Price")
                         .HasColumnType("numeric");
 
-                    b.Property<string>("Region")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Repair")
-                        .HasColumnType("text");
-
                     b.Property<int>("RestockThreshold")
                         .HasColumnType("integer");
-
-                    b.Property<string>("Technique")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TimeToTheMetro")
-                        .HasColumnType("text");
-
-                    b.Property<string>("TotalFloorArea")
-                        .HasColumnType("text");
-
-                    b.Property<string>("Town")
-                        .HasColumnType("text");
-
-                    b.Property<string>("YearBuilt")
-                        .HasColumnType("text");
 
                     b.HasKey("Id");
 

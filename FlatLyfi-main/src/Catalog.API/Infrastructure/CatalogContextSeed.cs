@@ -53,6 +53,29 @@ public partial class CatalogContextSeed(
                 MaxStockThreshold = 200,
                 RestockThreshold = 10,
                 PictureFileName = $"{source.Id}.webp",
+
+                Link = source.Link,
+                Region = source.Region,
+                Town = source.Town,
+                Metro = source.Metro,
+                TimeToTheMetro = source.TimeToTheMetro,
+                Address = source.Address,
+                NumberOfRooms = source.NumberOfRooms,
+                TotalFloorArea = source.TotalFloorArea,
+                KitchenArea = source.KitchenArea,
+                Floor = source.Floor,
+                LivingArea = source.LivingArea,
+                Bathroom = source.Bathroom,
+                Repair = source.Repair,
+                Furniture = source.Furniture,
+                Technique = source.Technique,
+                HouseType = source.HouseType,
+                InternetAndTV = source.InternetAndTV,
+                YearBuilt = source.YearBuilt,
+                FloorsInTheHouse = source.FloorsInTheHouse,
+                PassengerElevator = source.PassengerElevator,
+                FreightElevator = source.FreightElevator,
+                Parking = source.Parking,
             }).ToArray();
 
             if (catalogAI.IsEnabled)
@@ -64,7 +87,7 @@ public partial class CatalogContextSeed(
                     catalogItems[i].Embedding = embeddings[i];
                 }
             }
-
+            
             await context.CatalogItems.AddRangeAsync(catalogItems);
             logger.LogInformation("Seeded catalog with {NumItems} items", context.CatalogItems.Count());
             await context.SaveChangesAsync();
@@ -79,5 +102,49 @@ public partial class CatalogContextSeed(
         public string Name { get; set; }
         public string Description { get; set; }
         public decimal Price { get; set; }
+
+        public string Link { get; set; }
+
+        public string Region { get; set; }
+
+        public string Town { get; set; }
+
+        public string Metro { get; set; }
+
+        public string TimeToTheMetro { get; set; }
+
+        public string Address { get; set; }
+
+        public string NumberOfRooms { get; set; }
+
+        public string TotalFloorArea { get; set; }
+
+        public string KitchenArea { get; set; }
+
+        public string Floor { get; set; }
+
+        public string LivingArea { get; set; }
+
+        public string Bathroom { get; set; }
+
+        public string Repair { get; set; }
+
+        public string Furniture { get; set; }
+
+        public string Technique { get; set; }
+
+        public string HouseType { get; set; }
+
+        public string InternetAndTV { get; set; }
+
+        public string YearBuilt { get; set; }
+
+        public string FloorsInTheHouse { get; set; }
+
+        public string PassengerElevator { get; set; }
+
+        public string FreightElevator { get; set; }
+
+        public string Parking { get; set; }
     }
 }

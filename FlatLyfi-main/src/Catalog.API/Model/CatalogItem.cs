@@ -13,6 +13,50 @@ public class CatalogItem
 
     public string Description { get; set; }
 
+    public string Link { get; set; }
+
+    public string Region { get; set; }
+
+    public string Town { get; set; }
+
+    public string Metro { get; set; }
+
+    public string TimeToTheMetro { get; set; }
+
+    public string Address { get; set; }
+
+    public string NumberOfRooms { get; set; }
+
+    public string TotalFloorArea { get; set; }
+
+    public string KitchenArea { get; set; }
+
+    public string Floor { get; set; }
+
+    public string LivingArea { get; set; }
+
+    public string Bathroom { get; set; }
+
+    public string Repair { get; set; }
+
+    public string Furniture { get; set; }
+
+    public string Technique { get; set; }
+
+    public string HouseType { get; set; }
+
+    public string InternetAndTV { get; set; }
+
+    public string YearBuilt { get; set; }
+
+    public string FloorsInTheHouse { get; set; }
+
+    public string PassengerElevator { get; set; }
+
+    public string FreightElevator { get; set; }
+
+    public string Parking { get; set; }
+
     public decimal Price { get; set; }
 
     public string PictureFileName { get; set; }

@@ -380,7 +380,8 @@ public sealed class CatalogApiTests : IClassFixture<CatalogApiFixture>
             AvailableStock = 100,
             RestockThreshold = 10,
             MaxStockThreshold = 200,
-            OnReorder = false
+            OnReorder = false,
+            Link = "Test catalog link 1"
         };
         var response = await _httpClient.PostAsJsonAsync("/api/catalog/items", bodyContent);
         response.EnsureSuccessStatusCode();

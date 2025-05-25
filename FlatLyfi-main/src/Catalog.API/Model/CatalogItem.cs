@@ -57,6 +57,12 @@ public class CatalogItem
 
     public string Parking { get; set; }
 
+    public decimal Longitude { get; set; }
+
+    public decimal Latitude { get; set; }
+
+    public string LinkToProductCard { get; set; }
+
     public decimal Price { get; set; }
 
     public string PictureFileName { get; set; }

@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
+using OpenTelemetry.Resources;
 using Pgvector.EntityFrameworkCore;
 
 namespace eShop.Catalog.API;
@@ -395,7 +396,9 @@ public static class CatalogApi
             PassengerElevator = product.PassengerElevator,
             FreightElevator = product.FreightElevator,
             Parking = product.Parking,
-
+            Longitude = product.Longitude,
+            Latitude = product.Latitude,
+            LinkToProductCard = product.LinkToProductCard
         };
         item.Embedding = await services.CatalogAI.GetEmbeddingAsync(item);
 

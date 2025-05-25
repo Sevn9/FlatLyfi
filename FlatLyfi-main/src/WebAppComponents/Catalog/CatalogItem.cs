@@ -31,7 +31,10 @@ public record CatalogItem(
     string FloorsInTheHouse,
     string PassengerElevator,
     string FreightElevator,
-    string Parking);
+    string Parking,
+    decimal Longitude,
+    decimal Latitude,
+    string LinkToProductCard);
 
 public record CatalogResult(int PageIndex, int PageSize, int Count, List<CatalogItem> Data);
 public record CatalogBrand(int Id, string Brand);

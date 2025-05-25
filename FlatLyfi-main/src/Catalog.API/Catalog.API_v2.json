@@ -730,6 +730,17 @@
           "parking": {
             "type": "string"
           },
+          "longitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "latitude": {
+            "type": "number",
+            "format": "double"
+          },
+          "linkToProductCard": {
+            "type": "string"
+          },
           "price": {
             "type": "number",
             "format": "double"

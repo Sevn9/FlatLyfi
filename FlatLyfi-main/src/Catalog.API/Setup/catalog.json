@@ -1,15 +1,5 @@
 [
     {
-        "Id": 10045,
-        "Type": "test",
-        "Brand": "test",
-        "Name": "test Name",
-        "Description": "test description",
-        "Price": 10000,
-        "Link": "some test link here"
-
-    },
-    {
         "Id": 1,
         "Type": "не указано",
         "Brand": "не указано",

@@ -934,6 +934,9 @@
             "type": "number",
             "format": "double"
           },
+          "linkToProductCard": {
+            "type": "string"
+          },
           "price": {
             "type": "number",
             "format": "double"

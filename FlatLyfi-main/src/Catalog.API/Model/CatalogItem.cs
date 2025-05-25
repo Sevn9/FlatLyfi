@@ -61,6 +61,8 @@ public class CatalogItem
 
     public decimal Latitude { get; set; }
 
+    public string LinkToProductCard { get; set; }
+
     public decimal Price { get; set; }
 
     public string PictureFileName { get; set; }

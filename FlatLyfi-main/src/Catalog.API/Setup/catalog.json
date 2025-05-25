@@ -39,7 +39,8 @@
         "FreightElevator": "Нет",
         "Parking": "Открытая во дворе",
         "Longitude": 49.1585581,
-        "Latitude": 55.8409184
+        "Latitude": 55.8409184,
+        "LinkToProductCard": "https://localhost:7298/item/1"
     },
     {
         "Id": 2,
@@ -71,7 +72,8 @@
         "FreightElevator": "Нет",
         "Parking": "За шлагбаумом во дворе",
         "Longitude": 49.0695589,
-        "Latitude": 55.8403911
+        "Latitude": 55.8403911,
+        "LinkToProductCard": "https://localhost:7298/item/2"
     },
     {
         "Id": 3,
@@ -103,7 +105,8 @@
         "FreightElevator": "Нет",
         "Parking": "Открытая во дворе",
         "Longitude": 49.1281701,
-        "Latitude": 55.8365009
+        "Latitude": 55.8365009,
+        "LinkToProductCard": "https://localhost:7298/item/3"
     },
     {
         "Id": 4,
@@ -135,7 +138,8 @@
         "FreightElevator": "Нет",
         "Parking": "Открытая во дворе",
         "Longitude": 49.1519864,
-        "Latitude": 55.8369681
+        "Latitude": 55.8369681,
+        "LinkToProductCard": "https://localhost:7298/item/4"
     },
     {
         "Id": 5,
@@ -167,7 +171,8 @@
         "FreightElevator": "1",
         "Parking": "Подземная",
         "Longitude": 49.144254,
-        "Latitude": 55.822704
+        "Latitude": 55.822704,
+        "LinkToProductCard": "https://localhost:7298/item/5"
     },
     {
         "Id": 6,
@@ -199,7 +204,8 @@
         "FreightElevator": "1",
         "Parking": "Открытая во дворе",
         "Longitude": 49.1854721,
-        "Latitude": 55.7861301
+        "Latitude": 55.7861301,
+        "LinkToProductCard": "https://localhost:7298/item/6"
     },
     {
         "Id": 7,
@@ -231,7 +237,8 @@
         "FreightElevator": "Нет",
         "Parking": "нет",
         "Longitude": 49.1852718,
-        "Latitude": 55.7109602
+        "Latitude": 55.7109602,
+        "LinkToProductCard": "https://localhost:7298/item/7"
     },
     {
         "Id": 8,
@@ -263,7 +270,8 @@
         "FreightElevator": "1",
         "Parking": "Подземная, Открытая во дворе",
         "Longitude": 49.213844,
-        "Latitude": 55.775793
+        "Latitude": 55.775793,
+        "LinkToProductCard": "https://localhost:7298/item/8"
     },
     {
         "Id": 9,
@@ -295,7 +303,8 @@
         "FreightElevator": "1",
         "Parking": "Наземная многоуровневая, Открытая во дворе, За шлагбаумом во дворе",
         "Longitude": 49.1090916,
-        "Latitude": 55.8198516
+        "Latitude": 55.8198516,
+        "LinkToProductCard": "https://localhost:7298/item/9"
     },
     {
         "Id": 10,
@@ -327,7 +336,8 @@
         "FreightElevator": "Нет",
         "Parking": "нет",
         "Longitude": 49.091259,
-        "Latitude": 55.84539
+        "Latitude": 55.84539,
+        "LinkToProductCard": "https://localhost:7298/item/10"
     },
     {
         "Id": 11,
@@ -359,7 +369,8 @@
         "FreightElevator": "1",
         "Parking": "Открытая во дворе",
         "Longitude": 49.152471,
-        "Latitude": 55.824344
+        "Latitude": 55.824344,
+        "LinkToProductCard": "https://localhost:7298/item/11"
     },
     {
         "Id": 12,
@@ -391,7 +402,8 @@
         "FreightElevator": "Нет",
         "Parking": "нет",
         "Longitude": 49.1241924,
-        "Latitude": 55.8254692
+        "Latitude": 55.8254692,
+        "LinkToProductCard": "https://localhost:7298/item/12"
     },
     {
         "Id": 13,
@@ -423,7 +435,8 @@
         "FreightElevator": "Нет",
         "Parking": "За шлагбаумом во дворе",
         "Longitude": 49.1809681,
-        "Latitude": 55.7897763
+        "Latitude": 55.7897763,
+        "LinkToProductCard": "https://localhost:7298/item/13"
     },
     {
         "Id": 14,
@@ -455,7 +468,8 @@
         "FreightElevator": "Нет",
         "Parking": "нет",
         "Longitude": 49.1927534,
-        "Latitude": 55.7988119
+        "Latitude": 55.7988119,
+        "LinkToProductCard": "https://localhost:7298/item/14"
     },
     {
         "Id": 15,
@@ -487,7 +501,8 @@
         "FreightElevator": "Нет",
         "Parking": "нет",
         "Longitude": 49.1886155,
-        "Latitude": 55.7288152
+        "Latitude": 55.7288152,
+        "LinkToProductCard": "https://localhost:7298/item/15"
     },
     {
         "Id": 16,
@@ -519,7 +534,8 @@
         "FreightElevator": "Нет",
         "Parking": "Открытая во дворе",
         "Longitude": 49.1672328,
-        "Latitude": 55.7892883
+        "Latitude": 55.7892883,
+        "LinkToProductCard": "https://localhost:7298/item/16"
     },
     {
         "Id": 17,
@@ -551,7 +567,8 @@
         "FreightElevator": "1",
         "Parking": "Подземная, Открытая во дворе",
         "Longitude": 49.179309,
-        "Latitude": 55.7949708
+        "Latitude": 55.7949708,
+        "LinkToProductCard": "https://localhost:7298/item/17"
     },
     {
         "Id": 18,
@@ -583,7 +600,8 @@
         "FreightElevator": "1",
         "Parking": "За шлагбаумом во дворе",
         "Longitude": 49.112273,
-        "Latitude": 55.825461
+        "Latitude": 55.825461,
+        "LinkToProductCard": "https://localhost:7298/item/18"
     },
     {
         "Id": 19,
@@ -615,7 +633,8 @@
         "FreightElevator": "Нет",
         "Parking": "нет",
         "Longitude": 49.10796,
-        "Latitude": 55.816
+        "Latitude": 55.816,
+        "LinkToProductCard": "https://localhost:7298/item/19"
     },
     {
         "Id": 20,
@@ -647,7 +666,8 @@
         "FreightElevator": "Нет",
         "Parking": "За шлагбаумом во дворе",
         "Longitude": 49.1096849,
-        "Latitude": 55.8223701
+        "Latitude": 55.8223701,
+        "LinkToProductCard": "https://localhost:7298/item/20"
     }
 
 ]

@@ -78,6 +78,7 @@ public partial class CatalogContextSeed(
                 Parking = source.Parking,
                 Longitude = source.Longitude,
                 Latitude = source.Latitude,
+                LinkToProductCard = source.LinkToProductCard
             }).ToArray();
 
             if (catalogAI.IsEnabled)
@@ -152,5 +153,7 @@ public partial class CatalogContextSeed(
         public decimal Longitude { get; set; }
 
         public decimal Latitude { get; set; }
+
+        public string LinkToProductCard { get; set; }
     }
 }

@@ -72,5 +72,10 @@ public sealed class CatalogAI : ICatalogAI
         return null;
     }
 
-    private static string CatalogItemToString(CatalogItem item) => $"{item.Name} {item.Description}";
+    private static string CatalogItemToString(CatalogItem item) => $"{item.Name} " +
+        $"{item.Description} Цена {item.Price}Руб. Метро {item.Metro} Время до метро {item.TimeToTheMetro} " +
+        $"Адрес {item.Address} количество комнат {item.NumberOfRooms} Этаж {item.Floor} Санузел {item.Bathroom} " +
+        $"Ремонт {item.Repair} Мебель {item.Furniture} Приборы или техника в доме: {item.Technique} " +
+        $"Тип дома {item.HouseType} Интернет и ТВ: {item.InternetAndTV} Грузовой лифт {item.FreightElevator} " +
+        $"Парковка {item.Parking}";
 }

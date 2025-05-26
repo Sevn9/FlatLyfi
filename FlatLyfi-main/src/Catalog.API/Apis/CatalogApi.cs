@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Diagnostics;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Infrastructure;
@@ -17,6 +18,15 @@ public static class CatalogApi
         var api = vApi.MapGroup("api/catalog").HasApiVersion(1, 0).HasApiVersion(2, 0);
         var v1 = vApi.MapGroup("api/catalog").HasApiVersion(1, 0);
         var v2 = vApi.MapGroup("api/catalog").HasApiVersion(2, 0);
+
+        api.MapGet("/items/filtered", GetFilteredItemsAsync) // GetFilteredItemsAsync - это новый метод-обработчик
+            .WithName("GetFilteredItems") // Уникальное имя для эндпоинта
+            .WithSummary("Получить отфильтрованный список товаров каталога") // Краткое описание
+            .WithDescription("Получает список товаров каталога на основе указанных критериев, текстового поиска и количества элементов.") // Подробное описание
+            .WithTags("Items") // Тег для группировки в Swagger/OpenAPI
+            .Produces<List<CatalogItem>>(StatusCodes.Status200OK) // Описание успешного ответа (список товаров)
+            .Produces<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json") // Описание ответа при неверном запросе
+            .Produces<ProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json"); // Описание ответа при внутренней ошибке сервера
 
         // Routes for querying catalog items.
         v1.MapGet("/items", GetAllItemsV1)
@@ -57,7 +67,7 @@ public static class CatalogApi
             .WithDescription("Search the catalog for items related to the specified text")
             .WithTags("Search");
 
-                // Routes for resolving catalog items using AI.
+        // Routes for resolving catalog items using AI.
         v2.MapGet("/items/withsemanticrelevance", GetItemsBySemanticRelevance)
             .WithName("GetRelevantItems-V2")
             .WithSummary("Search catalog for relevant items")
@@ -77,14 +87,14 @@ public static class CatalogApi
             .WithTags("Brands");
         api.MapGet("/catalogtypes",
             [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
-            async (CatalogContext context) => await context.CatalogTypes.OrderBy(x => x.Type).ToListAsync())
+        async (CatalogContext context) => await context.CatalogTypes.OrderBy(x => x.Type).ToListAsync())
             .WithName("ListItemTypes")
             .WithSummary("List catalog item types")
             .WithDescription("Get a list of the types of catalog items")
             .WithTags("Types");
         api.MapGet("/catalogbrands",
             [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
-            async (CatalogContext context) => await context.CatalogBrands.OrderBy(x => x.Brand).ToListAsync())
+        async (CatalogContext context) => await context.CatalogBrands.OrderBy(x => x.Brand).ToListAsync())
             .WithName("ListItemBrands")
             .WithSummary("List catalog item brands")
             .WithDescription("Get a list of the brands of catalog items")
@@ -113,10 +123,78 @@ public static class CatalogApi
         return app;
     }
 
+    /// <summary>
+    /// Получает отфильтрованный список товаров каталога на основе критериев, текстового поиска и количества.
+    /// </summary>
+    [ProducesResponseType<List<CatalogItem>>(StatusCodes.Status200OK)] // Для Swagger: тип успешного ответа
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")] // Для Swagger: тип ответа при ошибке 400
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json")] // Для Swagger: тип ответа при ошибке 500
+    public static async Task<Ok<List<CatalogItem>>> GetFilteredItemsAsync(
+        [AsParameters] CatalogServices services,    // Ваши сервисы (контекст БД, AI, логгер)
+        [AsParameters] QueryCriteria criteria,         // Критерии фильтрации (из query-параметров URL)
+        [Description("The quantity item to return")] int take,                       // Количество элементов для выборки (из query-параметра ?take=N)
+        [Description("The text string to use when search for related items in the catalog")] string text                  // Текст для поиска (из query-параметра ?text=...) - может быть null
+        )
+    {
+        // Проверка входных данных
+        // Начинаем строить запрос к базе данных
+        var query = services.Context.CatalogItems.AsQueryable();
+
+        Debug.WriteLine("Enter CatalogApi GetFilteredItemsAsync method:  \n" + "NumberOfRooms: " + criteria.NumberOfRooms + "Floor: " + criteria.Floor + "text: " + text);
+
+        // 1. Применяем фильтры из объекта 'criteria'
+        if (criteria.Floor != null)
+        {
+            query = query.Where(ci => ci.Floor == criteria.Floor);
+            Debug.WriteLine("criteria.Floor.HasValue: query.count() :" + query.Count());
+        }
+        if (criteria.NumberOfRooms != null)
+        {
+            query = query.Where(ci => ci.NumberOfRooms == criteria.NumberOfRooms);
+            Debug.WriteLine("criteria.NumberOfRooms.HasValue: query.count() :" + query.Count());
+        }
+        // Сюда можно добавить другие фильтры, если расширите QueryCriteria
+
+        // 2. Обрабатываем текстовый поиск (параметр 'text')
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            if (services.CatalogAI.IsEnabled) // Если AI-поиск включен
+            {
+                // Важно: У CatalogItem должно быть свойство Embedding (векторное представление)
+                // и сервис CatalogAI.GetEmbeddingAsync должен быть доступен.
+                var embeddingVector = await services.CatalogAI.GetEmbeddingAsync(text);
+                // Сортируем по косинусному расстоянию (семантическая близость)
+                query = query.OrderBy(c => c.Embedding.CosineDistance(embeddingVector));
+            }
+            else // Если AI-поиск выключен, используем простой поиск по имени
+            {
+                var searchTextLower = text.ToLower(); // Поиск без учета регистра
+                query = query.Where(ci => ci.Name.ToLower().Contains(searchTextLower));
+                query = query.OrderBy(c => c.Name); // Сортируем по имени
+            }
+        }
+        else // Если текст для поиска не указан
+        {
+            // Сортировка по умолчанию (например, по имени)
+            query = query.OrderBy(c => c.Name);
+        }
+
+        // 3. Ограничиваем количество результатов
+        var items = await query
+            .Take(take)
+            .ToListAsync();
+
+        // Если ваш CatalogResult - это какой-то специальный класс, здесь нужно будет
+        // преобразовать 'items' в этот класс. Сейчас мы возвращаем просто List<CatalogItem>.
+        return TypedResults.Ok(items); // Возвращаем успешный результат (HTTP 200 OK)
+
+
+    }
+
     [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")]
     public static async Task<Ok<PaginatedItems<CatalogItem>>> GetAllItemsV1(
-        [AsParameters] PaginationRequest paginationRequest,
-        [AsParameters] CatalogServices services)
+    [AsParameters] PaginationRequest paginationRequest,
+    [AsParameters] CatalogServices services)
     {
         return await GetAllItems(paginationRequest, services, null, null, null);
     }
@@ -176,7 +254,8 @@ public static class CatalogApi
     {
         if (id <= 0)
         {
-            return TypedResults.BadRequest<ProblemDetails>(new (){
+            return TypedResults.BadRequest<ProblemDetails>(new()
+            {
                 Detail = "Id is not valid"
             });
         }
@@ -203,7 +282,7 @@ public static class CatalogApi
     [ProducesResponseType<byte[]>(StatusCodes.Status200OK, "application/octet-stream",
         [ "image/png", "image/gif", "image/jpeg", "image/bmp", "image/tiff",
           "image/wmf", "image/jp2", "image/svg+xml", "image/webp" ])]
-    public static async Task<Results<PhysicalFileHttpResult,NotFound>> GetItemPictureById(
+    public static async Task<Results<PhysicalFileHttpResult, NotFound>> GetItemPictureById(
         CatalogContext context,
         IWebHostEnvironment environment,
         [Description("The catalog item id")] int id)
@@ -308,7 +387,8 @@ public static class CatalogApi
     {
         if (productToUpdate?.Id == null)
         {
-            return TypedResults.BadRequest<ProblemDetails>(new (){
+            return TypedResults.BadRequest<ProblemDetails>(new()
+            {
                 Detail = "Item id must be provided in the request body."
             });
         }
@@ -325,7 +405,8 @@ public static class CatalogApi
 
         if (catalogItem == null)
         {
-            return TypedResults.NotFound<ProblemDetails>(new (){
+            return TypedResults.NotFound<ProblemDetails>(new()
+            {
                 Detail = $"Item with id {id} not found."
             });
         }

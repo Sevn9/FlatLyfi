@@ -6,6 +6,95 @@
     "version": "1.0"
   },
   "paths": {
+    "/api/catalog/items/filtered": {
+      "get": {
+        "tags": [
+          "Items"
+        ],
+        "summary": "Получить отфильтрованный список товаров каталога",
+        "description": "Получает список товаров каталога на основе указанных критериев, текстового поиска и количества элементов.",
+        "operationId": "GetFilteredItems",
+        "parameters": [
+          {
+            "name": "NumberOfRooms",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "Floor",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "take",
+            "in": "query",
+            "description": "The quantity item to return",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "text",
+            "in": "query",
+            "description": "The text string to use when search for related items in the catalog",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "description": "The API version, in the format 'major.minor'.",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "example": "1.0"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/CatalogItem"
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "application/problem+json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ProblemDetails"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/catalog/items/by": {
       "get": {
         "tags": [

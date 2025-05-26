@@ -1,6 +1,9 @@
 ﻿using System.ComponentModel;
+using System.Diagnostics;
 using System.Security.Claims;
 using System.Text.Json;
+using System.Text.RegularExpressions;
+using eShop.WebAppComponents.Catalog;
 using eShop.WebAppComponents.Services;
 using Microsoft.Extensions.AI;
 
@@ -50,16 +53,18 @@ public class ChatState
         Messages =
         [
             new ChatMessage(ChatRole.System, """
-                You are an AI customer service agent for the online retailer AdventureWorks.
-                You NEVER respond about topics other than AdventureWorks.
-                Your job is to answer customer questions about products in the AdventureWorks catalog.
-                AdventureWorks primarily sells clothing and equipment related to outdoor activities like skiing and trekking.
-                You try to be concise and only provide longer responses if necessary.
-                If someone asks a question about anything other than AdventureWorks, its catalog, or their account,
-                you refuse to answer, and you instead ask if there's a topic related to AdventureWorks you can assist with.
+                Вы — агент службы поддержки клиентов на базе искусственного интеллекта для интернет-площадки для подбора жилья FlatLyfi.
+                Вы НИКОГДА не отвечаете на темы, не связанные с FlatLyfi.
+                Ваша работа — отвечать на вопросы клиентов о квартирах в каталоге FlatLyfi.
+                FlatLyfi в основном специализируется на арендном жилье и и всем что связано с арендой квартир в том числе информацию о жилье.
+                Вы стараетесь быть краткими и давать более развернутые ответы только при необходимости.
+                Отвечай только тем, что реально есть в каталоге. 
+                Если нет точного совпадения, сначала уточни запрос пользователя.
+                Если кто-то задает вопрос о чем-либо, кроме FlatLyfi, его каталога или его учетной записи,
+                вы отказываетесь отвечать, а вместо этого спрашиваете, есть ли тема, связанная с FlatLyfi, с которой вы можете помочь.
                 """),
             new ChatMessage(ChatRole.Assistant, """
-                Hi! I'm the AdventureWorks Concierge. How can I help?
+                Привет! Я ИИ риелтор. Хотите подобрать себе жилье? Опишите что бы вы хотели видеть в вашей квартире, а я порекомендую вам варианты.
                 """),
         ];
     }
@@ -114,18 +119,38 @@ public class ChatState
             claims.FirstOrDefault(x => x.Type == claimType)?.Value ?? "";
     }
 
-    [Description("Searches the AdventureWorks catalog for a provided product description")]
-    private async Task<string> SearchCatalog([Description("The product description for which to search")] string productDescription)
+    [Description("Searches the FlatLyfi catalog for a provided apartment description")]
+    private async Task<string> SearchCatalog([Description("The apartment description for which to search")] string productDescription)
     {
         try
         {
-            var results = await _catalogService.GetCatalogItemsWithSemanticRelevance(0, 8, productDescription!);
-            for (int i = 0; i < results.Data.Count; i++)
+            Debug.WriteLine("SearchCatalog method: \n");
+            Debug.WriteLine("productDescription:" + productDescription);
+            var criteria = ParseCriteria(productDescription);
+
+            Debug.WriteLine("criteria:" + "NumberOfRooms:" + criteria.NumberOfRooms +"Floor:" + criteria.Floor);
+
+            // берём 40 «кандидатов» уже после жёстких фильтров
+            var resultsFiltered = await _catalogService.GetCatalogItemsFilteredAsync(
+                criteria, 40, productDescription);
+
+            Debug.WriteLine("resultsFiltered.Count:" + resultsFiltered.Count);
+
+            //var results = await _catalogService.GetCatalogItemsWithSemanticRelevance(0, 40, productDescription!);
+            for (int i = 0; i < resultsFiltered.Count; i++)
             {
-                results.Data[i] = results.Data[i] with { PictureUrl = _productImages.GetProductImageUrl(results.Data[i].Id) };
+                resultsFiltered[i] = resultsFiltered[i] with { PictureUrl = _productImages.GetProductImageUrl(resultsFiltered[i].Id) };
             }
 
-            return JsonSerializer.Serialize(results);
+            var selectedItems = resultsFiltered.Select(item => new
+            {
+                item.Name,
+                item.Price,
+                item.PictureUrl,
+                item.LinkToProductCard
+            }).ToList();
+
+            return JsonSerializer.Serialize(selectedItems);
         }
         catch (HttpRequestException e)
         {
@@ -174,5 +199,24 @@ public class ChatState
         }
 
         return message;
+    }
+
+    private static QueryCriteria ParseCriteria(string text)
+    {
+        // 1 комната / 2-комнатная / однокомнатная
+        int? rooms = Regex.Match(text, @"(\d)[-\s]*комнат")
+                          is { Success: true } m1 ? int.Parse(m1.Groups[1].Value) : null;
+
+        // 10 этаж / на 10-м этаже
+        int? floor = Regex.Match(text, @"(\d+)[-\s]*(?:й|ой)?\s*этаж")
+                          is { Success: true } m2 ? int.Parse(m2.Groups[1].Value) : null;
+
+        // до 60 000 ₽ / 60к / 60000
+        int? maxPrice = Regex.Match(text, @"до\s*(\d[\d\s]*)\s*([₽р]|k|к)")
+                              is { Success: true } m3
+                         ? int.Parse(m3.Groups[1].Value.Replace(" ", "")) * (m3.Groups[2].Value.ToLower() switch { "k" or "к" => 1000, _ => 1 })
+                         : null;
+
+        return new QueryCriteria(rooms.ToString(), floor.ToString());
     }
 }

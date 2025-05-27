@@ -232,8 +232,12 @@
     src: url('../fonts/open-sans-v36-latin-800italic.woff2') format('woff2');
 }
 
+* {
+    font-family: Arial;
+}
+
 body {
-    font-family: 'Plus Jakarta Sans';
+/*    font-family: 'Plus Jakarta Sans';*/
 }
 
 .container {

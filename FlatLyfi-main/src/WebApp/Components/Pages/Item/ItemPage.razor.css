@@ -11,8 +11,8 @@ p:first-of-type {
 }
 
 img {
-    width: 25rem;
-    max-width: 50%;
+    max-width: 100%;
+    margin-top: 1rem;
 }
 
 .description {

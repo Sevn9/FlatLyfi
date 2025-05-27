@@ -29,14 +29,15 @@
 }
 
 .eshop-header-intro {
-    position: absolute;
+/*    position: absolute;*/
     max-width: 48rem;
-    bottom: 3rem;
+/*    bottom: 3rem;*/
     white-space: nowrap;
 }
 
 .eshop-header-intro h1 {
-    color: #000;
+    color: white;
+    text-shadow: 1px 1px 0 black;
     font-size: 3.5rem;
     font-style: normal;
     font-weight: 700;

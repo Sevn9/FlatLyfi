@@ -24,6 +24,7 @@
 
 .catalog-product .catalog-product-content {
     display: flex;
+    flex-direction: column;
     padding: 0 0.75rem;
     align-items: center;
     gap: 0.5rem;
@@ -34,19 +35,24 @@
     color: #000;
     font-size: 1rem;
     font-style: normal;
-    font-weight: 600;
+    font-weight: 300;
     line-height: 150%;
-    text-align: left;
 }
 
 .catalog-product-content .price {
-    color: #444;
-    text-align: right;
+    color: #000;
     font-size: 1rem;
     font-style: normal;
     font-weight: 600;
     line-height: 150%;
-    margin-left: auto;
+}
+
+.catalog-product-content .adress {
+    color: #000;
+    font-size: 1rem;
+    font-style: normal;
+    font-weight: 300;
+    line-height: 150%;
 }
 
 

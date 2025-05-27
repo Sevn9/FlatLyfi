@@ -124,9 +124,13 @@
     src: url('../fonts/plus-jakarta-sans-v8-latin-800italic.woff2') format('woff2'); 
 }
 
+* {
+    font-family: Arial;
+}
+
 body {
     margin-top: 0;
-    font-family: 'Plus Jakarta Sans';
+/*    font-family: 'Plus Jakarta Sans';*/
     min-width:480px;
 }
 
@@ -221,7 +225,7 @@ body {
 
 .eshop-footer {
     margin-top: 3.5rem;
-    background-color: #000;
+    background-color: #9263a1;
     width: 100%;
 }
 
@@ -313,7 +317,8 @@ body {
     align-items: flex-end;
     gap: 8px;
     align-self: stretch;
-    background: #000;
+    color: white;
+    background: #9263a1;
 }
 
 .icon {

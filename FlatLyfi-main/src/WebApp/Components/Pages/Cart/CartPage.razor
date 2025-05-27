@@ -5,8 +5,8 @@
 @attribute [StreamRendering]
 @attribute [Authorize]
 
-<PageTitle>Shopping Bag | FlatLyfi</PageTitle>
-<SectionContent SectionName="page-header-title">Shopping bag</SectionContent>
+<PageTitle>Корзина сравнения | FlatLyfi</PageTitle>
+<SectionContent SectionName="page-header-title">Корзина сравнения</SectionContent>
 
 <div class='cart'>
     @if (basketItems is null)
@@ -16,7 +16,7 @@
     else if (basketItems.Count == 0)
     {
         <p>
-            Your shopping bag is empty. <a href="">Continue shopping.</a>
+            Ничего не добавлено к сравнению. <a href="">Продолжить поиск квартиры.</a>
         </p>
     }
     else
@@ -63,7 +63,7 @@
             <div class="cart-summary-container">
                 <div class="cart-summary-header">
                     <img role="presentation" src="icons/cart.svg" />
-                    Your shopping bag
+                    Сравнения
                     <span class="filter-badge">@TotalQuantity</span>
                 </div>
                 <div class="cart-summary-total">
@@ -73,7 +73,7 @@
                 <a href="checkout" class="button button-primary">Check out</a>
                 <a href="" class="cart-summary-link">
                     <img role="presentation" src="icons/arrow-left.svg" />
-                    <p>Continue shopping</p>
+                    <p>Продолжить поиск квартиры</p>
                 </a>
             </div>
         </div>

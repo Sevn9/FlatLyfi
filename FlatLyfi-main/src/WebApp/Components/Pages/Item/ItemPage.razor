@@ -48,6 +48,15 @@
             </div>
 
             <img alt="@item.Name" src="@ProductImages.GetProductImageUrl(item)" />
+           <div id="map" style="width: 600px; height: 400px"></div>
+           <script>
+    window.mapHint = '@item.Name'.replace(/'/g, "\\'");
+    window.mapBalloon = '@item.Description'.replace(/'/g, "\\'");
+    window.mapCenter = [@item.Latitude.ToString(System.Globalization.CultureInfo.InvariantCulture), @item.Longitude.ToString(System.Globalization.CultureInfo.InvariantCulture)];
+</script>
+	        <script src="https://api-maps.yandex.ru/2.1/?apikey=<API_KEY>&lang=ru_RU"> // Replace <API_KEY> with your actual Yandex Maps API key
+	        </script>
+	        <script src="yandex-map.js"></script>
         </div>
 
         <div class="description">

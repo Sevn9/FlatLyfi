@@ -1,12 +1,12 @@
-﻿@page "/cart"
+@page "/favourites"
 @inject NavigationManager Nav
 @inject BasketState Basket
 @inject IProductImageUrlProvider ProductImages
 @attribute [StreamRendering]
 @attribute [Authorize]
 
-<PageTitle>Корзина сравнения | FlatLyfi</PageTitle>
-<SectionContent SectionName="page-header-title">Корзина сравнения</SectionContent>
+<PageTitle>Избранное | FlatLyfi</PageTitle>
+<SectionContent SectionName="page-header-title">Избранное</SectionContent>
 
 <div class='cart'>
     @if (basketItems is null)
@@ -22,21 +22,234 @@
     else
     {
         <div class='cart-items'>
-            <div class='cart-item-header'>
-                <div class='catalog-item-info'>Products</div>
-                <div class='catalog-item-quantity'>Quantity</div>
-                <div class='catalog-item-total'>Total</div>
-            </div>
-            @foreach (var item in basketItems)
+            <table>
+                <thead>
+                    <tr>
+                        <th>Квартиры</th>
+                        @foreach (var item in basketItems)
+                        {   
+                            <th>@item.ProductName</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <th>Фото</th>
+                        @foreach (var item in basketItems)
+                        {   
+                            <td><img class="table-img" alt="@item.ProductName" src="@ProductImages.GetProductImageUrl(item.ProductId)" /></td>
+                        }
+                    </tr>
+
+                    <tr><th colspan="@(@basketItems.Count() + 1)" style="text-align: center; background: #f0f0f0; font-weight: bold;"><h2>О квартире</h2></th></tr>
+                    
+                    <tr>
+                        <th>Количество комнат</th>
+                        @foreach (var item in basketItems)
+                        {   
+                            <td>@item.NumberOfRooms</td>
+                        }
+                    </tr>
+                    
+                    <tr>
+                        <th>Общая площадь</th>
+                        @foreach (var item in basketItems)
+                        {
+                            <td>@(item.TotalFloorArea == "не указано" ? "не указано" : item.TotalFloorArea + "\u00A0м²")</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th>Площадь кухни</th>
+                        @foreach (var item in basketItems)
+                        {
+                            <td>@(item.KitchenArea == "не указано" ? "не указано" : item.KitchenArea + "\u00A0м²")</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th>Жилая площадь</th>
+                        @foreach (var item in basketItems)
+                        {
+                            <td>@(item.LivingArea == "не указано" ? "не указано" : item.LivingArea + "\u00A0м²")</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th>Этаж</th>
+                        @foreach (var item in basketItems)
+                        {
+                            <td>@item.Floor из @item.FloorsInTheHouse</td>
+                        }
+                    </tr>  
+                  
+                    <tr>
+                        <th>Санузел</th>
+                        @foreach (var item in basketItems)
+                        {
+                            <td>@item.Bathroom</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th>Ремонт</th>
+                        @foreach (var item in basketItems)
+                        {
+                            <td>@item.Repair</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th>Мебель</th>
+                        @foreach (var item in basketItems)
+                        {
+                            <td>@item.Furniture</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th>Техника</th>
+                        @foreach (var item in basketItems)
+                        {
+                            <td>@item.Technique</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th>Интернет и ТВ</th>
+                        @foreach (var item in basketItems)
+                        {
+                            <td>@item.InternetAndTV</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th>Расположение</th>
+                        @foreach (var item in basketItems)
+                            {
+                                <td>
+                                    <span>@item.Address</span>
+                                    @if (item.TimeToTheMetro != "не указано")
+                                    {
+                                        <div>
+                                            <span>@item.Metro</span>
+                                            <span>@item.TimeToTheMetro</span>
+                                        </div>
+                                    }  
+                                </td> 
+                            }
+                    </tr>
+
+                    <tr>
+                        <th>Описание</th>
+                        @foreach (var item in basketItems)
+                        {
+                            <td>@item.Description</td>
+                        }
+                    </tr>
+
+                    <tr><th colspan="@(@basketItems.Count() + 1)" style="text-align: center; background: #f0f0f0; font-weight: bold;"><h2>О доме</h2></th></tr>
+
+                    <tr>
+                        <th>Тип дома</th>
+                        @foreach (var item in basketItems)
+                        {
+                            <td>@item.HouseType</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th>Год постройки</th>
+                        @foreach (var item in basketItems)
+                        {
+                            <td>@item.YearBuilt</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th>Этажей в доме</th>
+                        @foreach (var item in basketItems)
+                        {
+                            <td>@item.FloorsInTheHouse</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th>Пассажирский лифт</th>
+                        @foreach (var item in basketItems)
+                        {
+                            <td>@item.PassengerElevator</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th>Грузовой лифт</th>
+                        @foreach (var item in basketItems)
+                        {
+                            <td>@item.FreightElevator</td>
+                        }
+                    </tr>
+
+                    <tr>
+                        <th>Парковка</th>
+                        @foreach (var item in basketItems)
+                        {
+                            <td>@item.Parking</td>
+                        }
+                    </tr>
+
+            @* @foreach (var item in basketItems)
             {
                 var quantity = CurrentOrPendingQuantity(item.ProductId, item.Quantity);
                 <div class="cart-item" @key="@item.Id">
                     <div class="catalog-item-info">
                         <img alt="@item.ProductName" src="@ProductImages.GetProductImageUrl(item.ProductId)" />
-                        <div class="catalog-item-content">
-                            <p class="name">@item.ProductName</p>
-                            <p class="price">@item.UnitPrice.ToString() ₽</p>
-                        </div>
+                        <h1>@item.ProductName</h1>
+                        <h2 class="price">@item.Price&nbsp;₽</h2>
+                            <h2>О квартире</h2>
+                            <ul>
+                                <li><span>Количество комнат</span><span>: </span>@item.NumberOfRooms</li>
+                                <li>
+                                    <span>Общая площадь</span><span>: </span>@(item.TotalFloorArea == "не указано" ? "не указано" : item.TotalFloorArea + "\u00A0м²")
+                                </li>
+                                <li>
+                                    <span>Площадь кухни</span><span>: </span>@(item.KitchenArea == "не указано" ? "не указано" : item.KitchenArea + "\u00A0м²")
+                                </li>
+                                <li>
+                                    <span>Жилая площадь</span><span>: </span>@(item.LivingArea == "не указано" ? "не указано" : item.LivingArea + "\u00A0м²")
+                                </li>
+                                <li><span>Этаж</span><span>: </span>@item.Floor из @item.FloorsInTheHouse</li>
+                                <li><span>Санузел</span><span>: </span>@item.Bathroom</li>
+                                <li><span>Ремонт</span><span>: </span>@item.Repair</li>
+                                <li><span>Мебель</span><span>: </span>@item.Furniture</li>
+                                <li><span>Техника</span><span>: </span>@item.Technique</li>
+                                <li><span>Интернет и ТВ</span><span>: </span>@item.InternetAndTV</li>
+                            </ul>
+
+                            <h2>Расположение</h2>
+                            <div>
+                                <span>@item.Address</span>
+                                @if (item.TimeToTheMetro != "не указано")
+                                {
+                                    <div>
+                                        <span>@item.Metro</span>
+                                        <span>@item.TimeToTheMetro</span>
+                                    </div>
+                                }
+                            </div>
+
+                            <h2>Описание</h2>
+                            <p>@item.Description</p>
+
+                            <h2>О доме</h2>
+                            <ul>
+                                <li><span>Тип дома</span><span>: </span>@item.HouseType</li>
+                                <li><span>Год постройки</span><span>: </span>@item.YearBuilt</li>
+                                <li><span></span>Этажей в доме<span>: </span>@item.FloorsInTheHouse</li>
+                                <li><span></span>Пассажирский лифт<span>: </span>@item.PassengerElevator</li>
+                                <li><span></span>Грузовой лифт<span>: </span>@item.FreightElevator</li>
+                                <li><span></span>Парковка<span>: </span>@item.Parking</li>
+                            </ul>
                     </div>
                     <div class="catalog-item-quantity">
                         <form method="post" data-enhance>
@@ -51,13 +264,12 @@
                             </button>
                         </form>
                     </div>
-                    <div class="catalog-item-total">
-                        @((item.UnitPrice * quantity).ToString()) ₽
-                    </div>
                 </div>
-            }
+            } *@
+                </tbody>
+            </table>
         </div>
-       
+
 
         <div class="cart-summary">
             <div class="cart-summary-container">
@@ -66,11 +278,7 @@
                     Сравнения
                     <span class="filter-badge">@TotalQuantity</span>
                 </div>
-                <div class="cart-summary-total">
-                    <div>Total</div>
-                    <div>@TotalPrice?.ToString() ₽</div>
-                </div>
-                <a href="checkout" class="button button-primary">Check out</a>
+                <a href="checkout" class="button button-primary">Сравнить</a>
                 <a href="" class="cart-summary-link">
                     <img role="presentation" src="icons/arrow-left.svg" />
                     <p>Продолжить поиск квартиры</p>

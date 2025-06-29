@@ -163,3 +163,29 @@ th, td {
         flex-direction: column-reverse;
     }
 }
+
+.get-recomendation {
+    display: flex;
+    align-items: center;
+    gap: 1.2rem;
+}
+
+    .get-recomendation button {
+        background-color: black;
+        color: white;
+        border-radius: .25rem;
+        border: 0;
+        padding: 0.5rem 1.25rem;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+        .get-recomendation button:hover {
+            background-color: #666;
+        }
+
+        .get-recomendation button:active {
+            background-color: #333;
+        }

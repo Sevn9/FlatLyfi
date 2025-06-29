@@ -1,6 +1,7 @@
 ﻿using System.Diagnostics;
 using Microsoft.Extensions.AI;
 using Pgvector;
+using Pgvector.EntityFrameworkCore;
 
 namespace eShop.Catalog.API.Services;
 
@@ -61,12 +62,15 @@ public sealed class CatalogAI : ICatalogAI
             var embedding = await _embeddingGenerator.GenerateEmbeddingVectorAsync(text);
             embedding = embedding[0..EmbeddingDimensions];
 
+            var array = embedding.ToArray();
+            var normalized = array.NormalizeL2();
+
             if (_logger.IsEnabled(LogLevel.Trace))
             {
                 _logger.LogTrace("Generated embedding in {ElapsedMilliseconds}s: '{Text}'", Stopwatch.GetElapsedTime(timestamp).TotalSeconds, text);
             }
 
-            return new Vector(embedding);
+            return new Vector(normalized);
         }
 
         return null;
@@ -75,7 +79,28 @@ public sealed class CatalogAI : ICatalogAI
     private static string CatalogItemToString(CatalogItem item) => $"{item.Name} " +
         $"{item.Description} Цена {item.Price}Руб. Метро {item.Metro} Время до метро {item.TimeToTheMetro} " +
         $"Адрес {item.Address} количество комнат {item.NumberOfRooms} Этаж {item.Floor} Санузел {item.Bathroom} " +
-        $"Ремонт {item.Repair} Мебель {item.Furniture} Приборы или техника в доме: {item.Technique} " +
-        $"Тип дома {item.HouseType} Интернет и ТВ: {item.InternetAndTV} Грузовой лифт {item.FreightElevator} " +
+        $"Ремонт {item.Repair} Мебель {item.Furniture} из приборов и техники в доме есть {item.Technique} " +
+        $"дом {item.HouseType} есть {item.InternetAndTV} Грузовой лифт {item.FreightElevator} " +
         $"Парковка {item.Parking}";
+}
+
+public static class VectorExtensions
+{
+    public static float[] NormalizeL2(this float[] vector)
+    {
+        // вычисляем L2-норму
+        double sumSquares = 0;
+        for (int i = 0; i < vector.Length; i++)
+            sumSquares += vector[i] * vector[i];
+
+        var norm = Math.Sqrt(sumSquares);
+        if (norm == 0) return vector; // на всякий случай
+
+        // создаём новый массив-копию, чтобы не мутировать исходный
+        var normalized = new float[vector.Length];
+        for (int i = 0; i < vector.Length; i++)
+            normalized[i] = (float)(vector[i] / norm);
+
+        return normalized;
+    }
 }

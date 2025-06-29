@@ -39,3 +39,8 @@ public record CatalogItem(
 public record CatalogResult(int PageIndex, int PageSize, int Count, List<CatalogItem> Data);
 public record CatalogBrand(int Id, string Brand);
 public record CatalogItemType(int Id, string Type);
+
+public record QueryCriteria(
+    string? NumberOfRooms,
+    string? Floor
+    );

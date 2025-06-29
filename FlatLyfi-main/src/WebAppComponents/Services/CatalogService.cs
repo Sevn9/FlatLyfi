@@ -1,4 +1,7 @@
-﻿using System.Net.Http.Json;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
+using System.Net.Http;
+using System.Net.Http.Json;
 using System.Web;
 using eShop.WebAppComponents.Catalog;
 
@@ -63,5 +66,67 @@ public class CatalogService(HttpClient httpClient) : ICatalogService
         }
 
         return $"{baseUri}items?{filterQs}pageIndex={pageIndex}&pageSize={pageSize}";
+    }
+
+    public async Task<List<CatalogItem>> GetCatalogItemsFilteredAsync(
+        QueryCriteria criteria, int take, string? text)
+    {
+        // Полный путь к эндпоинту на сервере Catalog.API
+        const string endpointPath = "items/filtered";
+
+        var queryStringParts = new List<string>();
+
+        // Параметр 'take' обязателен
+        queryStringParts.Add($"take={take}");
+
+        // Добавляем параметры из QueryCriteria, если они заданы
+        if (criteria.Floor != null)
+        {
+            queryStringParts.Add($"Floor={criteria.Floor}");
+        }
+
+        if (criteria.NumberOfRooms != null)
+        {
+            queryStringParts.Add($"NumberOfRooms={criteria.NumberOfRooms}");
+        }
+
+        // Добавляем текстовый параметр, если он задан и не пустой
+        // Uri.EscapeDataString важен для корректной передачи специальных символов в URL
+        if (!string.IsNullOrWhiteSpace(text))
+        {
+            queryStringParts.Add($"text={Uri.EscapeDataString(text)}");
+        }
+
+        // Формируем полный URI
+        var requestUri = $"{remoteServiceBaseUrl}{endpointPath}";
+
+        if (queryStringParts.Any())
+        {
+            requestUri += $"?{string.Join("&", queryStringParts)}";
+        }
+
+        // _logger?.LogInformation("Вызов Catalog API: {RequestUri}", requestUri);
+
+        try
+        {
+            // Выполняем GET-запрос и десериализуем ответ
+            var result = await httpClient.GetFromJsonAsync<List<CatalogItem>>(requestUri);
+
+            // GetFromJsonAsync обычно возвращает пустой список, если JSON-массив пуст,
+            // а не null. Но для подстраховки можно добавить проверку.
+            return result ?? new List<CatalogItem>();
+        }
+        catch (HttpRequestException ex)
+        {
+            Debug.WriteLine(ex);
+            throw; // Пример: пробрасываем дальше
+        }
+        catch (Exception ex)
+        {
+            Debug.WriteLine(ex);
+            // Обработка других возможных ошибок (например, проблем с десериализацией)
+            // _logger?.LogError(ex, "Неожиданная ошибка при получении отфильтрованных товаров из Catalog API: {RequestUri}", requestUri);
+            throw;
+        }
     }
 }

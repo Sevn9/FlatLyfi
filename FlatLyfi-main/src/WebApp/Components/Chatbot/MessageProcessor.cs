@@ -7,7 +7,8 @@ namespace eShop.WebApp.Chatbot;
 
 public static partial class MessageProcessor
 {
-    public static MarkupString AllowImages(string message)
+    //AllowImages -> ProcessMessageContent
+    public static MarkupString ProcessMessageContent(string message)
     {
         // Having to process markdown and deal with HTML encoding isn't ideal. If the language model could return
         // search results in some defined format like JSON we could simply loop over it in .razor code. This is
@@ -17,19 +18,53 @@ public static partial class MessageProcessor
         var prevEnd = 0;
         message = message.Replace("&lt;", "<").Replace("&gt;", ">");
 
-        foreach (Match match in FindMarkdownImages().Matches(message))
+        foreach (Match match in FindMarkdownLinksAndImages().Matches(message))
         {
+            // Добавляем текст перед текущим совпадением, HTML-экранированный
+            if (match.Index > prevEnd)
+            {
+                result.Append(HtmlEncoder.Default.Encode(message.Substring(prevEnd, match.Index - prevEnd)));
+            }
+
+            string leadingChar = match.Groups[1].Value; // Захватывает '!' или пустую строку
+            string textOrAlt = match.Groups[2].Value;   // Текст ссылки или alt текст изображения
+            string url = match.Groups[3].Value;         // URL
+
+            if (leadingChar == "!") // Это изображение: ![alt](url)
+            {
+                result.Append($"<img title=\"{HtmlEncoder.Default.Encode(textOrAlt)}\" src=\"{HtmlEncoder.Default.Encode(url)}\" style=\"max-width: 100%; height: auto;\" />");
+            }
+            else // Это ссылка: [text](url)
+            {
+                result.Append($"<a href=\"{HtmlEncoder.Default.Encode(url)}\" target=\"_blank\">{HtmlEncoder.Default.Encode(textOrAlt)}</a>");
+            }
+
+            /*
             var contentToHere = message.Substring(prevEnd, match.Index - prevEnd);
             result.Append(HtmlEncoder.Default.Encode(contentToHere));
             result.Append($"<img title=\"{(HtmlEncoder.Default.Encode(match.Groups[1].Value))}\" src=\"{(HtmlEncoder.Default.Encode(match.Groups[2].Value))}\" />");
-
+            */
             prevEnd = match.Index + match.Length;
+            
         }
-        result.Append(HtmlEncoder.Default.Encode(message.Substring(prevEnd)));
+        //result.Append(HtmlEncoder.Default.Encode(message.Substring(prevEnd)));
+
+        // Добавляем оставшийся текст после последнего совпадения, HTML-экранированный
+        if (prevEnd < message.Length)
+        {
+            result.Append(HtmlEncoder.Default.Encode(message.Substring(prevEnd)));
+        }
 
         return new MarkupString(result.ToString());
     }
 
     [GeneratedRegex(@"\!?\[([^\]]+)\]\s*\(([^\)]+)\)")]
     private static partial Regex FindMarkdownImages();
+
+    // Обновленное регулярное выражение:
+    // Группа 1 (!?): Захватывает необязательный '!' в начале.
+    // Группа 2 ([^\]]*): Захватывает текст внутри квадратных скобок (alt для img, текст для a).
+    // Группа 3 ([^\)]+): Захватывает URL внутри круглых скобок.
+    [GeneratedRegex(@"(!?)\[([^\]]*)\]\s*\(([^\)]+)\)")]
+    private static partial Regex FindMarkdownLinksAndImages();
 }

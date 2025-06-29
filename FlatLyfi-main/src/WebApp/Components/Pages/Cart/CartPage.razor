@@ -23,9 +23,7 @@
     {
         <div class='cart-items'>
             <div class='cart-item-header'>
-                <div class='catalog-item-info'>Products</div>
-                <div class='catalog-item-quantity'>Quantity</div>
-                <div class='catalog-item-total'>Total</div>
+                <div class='catalog-item-info'><h2>Квартиры</h2></div>
             </div>
             @foreach (var item in basketItems)
             {
@@ -42,17 +40,14 @@
                         <form method="post" data-enhance>
                             <input type="hidden" name="_handler" value="update-cart" />
                             <AntiforgeryToken />
-                            <input aria-label="product quantity" type="number" name="UpdateQuantityValue" value="@quantity" min="0" />
+                            <input style="display: none;" aria-label="product quantity" type="number" name="UpdateQuantityValue" value="@quantity" min="0" />
                             <button type="submit" 
                                     class="button button-secondary"
                                     name="UpdateQuantityId" 
                                     value="@item.ProductId">
-                                Update
+                                Удалить
                             </button>
                         </form>
-                    </div>
-                    <div class="catalog-item-total">
-                        @((item.UnitPrice * quantity).ToString()) ₽
                     </div>
                 </div>
             }
@@ -66,11 +61,7 @@
                     Сравнения
                     <span class="filter-badge">@TotalQuantity</span>
                 </div>
-                <div class="cart-summary-total">
-                    <div>Total</div>
-                    <div>@TotalPrice?.ToString() ₽</div>
-                </div>
-                <a href="checkout" class="button button-primary">Check out</a>
+                <a href="favourites" class="button button-primary">Сравнить</a>
                 <a href="" class="cart-summary-link">
                     <img role="presentation" src="icons/arrow-left.svg" />
                     <p>Продолжить поиск квартиры</p>
@@ -109,7 +100,7 @@
     private async Task UpdateQuantityAsync()
     {
         var id = UpdateQuantityId!.Value;
-        var quantity = UpdateQuantityValue!.Value;
+        var quantity = 0;
         await Basket.SetQuantityAsync(id, quantity);
         basketItems = await Basket.GetBasketItemsAsync();
     }

@@ -126,68 +126,58 @@ public static class CatalogApi
     /// <summary>
     /// Получает отфильтрованный список товаров каталога на основе критериев, текстового поиска и количества.
     /// </summary>
-    [ProducesResponseType<List<CatalogItem>>(StatusCodes.Status200OK)] // Для Swagger: тип успешного ответа
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")] // Для Swagger: тип ответа при ошибке 400
-    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json")] // Для Swagger: тип ответа при ошибке 500
+    [ProducesResponseType<List<CatalogItem>>(StatusCodes.Status200OK)]
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status400BadRequest, "application/problem+json")] 
+    [ProducesResponseType<ProblemDetails>(StatusCodes.Status500InternalServerError, "application/problem+json")] 
     public static async Task<Ok<List<CatalogItem>>> GetFilteredItemsAsync(
-        [AsParameters] CatalogServices services,    // Ваши сервисы (контекст БД, AI, логгер)
-        [AsParameters] QueryCriteria criteria,         // Критерии фильтрации (из query-параметров URL)
-        [Description("The quantity item to return")] int take,                       // Количество элементов для выборки (из query-параметра ?take=N)
-        [Description("The text string to use when search for related items in the catalog")] string text                  // Текст для поиска (из query-параметра ?text=...) - может быть null
+        [AsParameters] CatalogServices services,
+        [AsParameters] QueryCriteria criteria,
+        [Description("The quantity item to return")] int take,
+        [Description("The text string to use when search for related items in the catalog")] string text
         )
     {
-        // Проверка входных данных
-        // Начинаем строить запрос к базе данных
-        var query = services.Context.CatalogItems.AsQueryable();
-
-        Debug.WriteLine("Enter CatalogApi GetFilteredItemsAsync method:  \n" + "NumberOfRooms: " + criteria.NumberOfRooms + "Floor: " + criteria.Floor + "text: " + text);
-
-        // 1. Применяем фильтры из объекта 'criteria'
-        if (criteria.Floor != null)
+        try
         {
-            query = query.Where(ci => ci.Floor == criteria.Floor);
-            Debug.WriteLine("criteria.Floor.HasValue: query.count() :" + query.Count());
-        }
-        if (criteria.NumberOfRooms != null)
-        {
-            query = query.Where(ci => ci.NumberOfRooms == criteria.NumberOfRooms);
-            Debug.WriteLine("criteria.NumberOfRooms.HasValue: query.count() :" + query.Count());
-        }
-        // Сюда можно добавить другие фильтры, если расширите QueryCriteria
+            var query = services.Context.CatalogItems.AsQueryable();
 
-        // 2. Обрабатываем текстовый поиск (параметр 'text')
-        if (!string.IsNullOrWhiteSpace(text))
-        {
-            if (services.CatalogAI.IsEnabled) // Если AI-поиск включен
+            Debug.WriteLine("Enter CatalogApi GetFilteredItemsAsync method:  \n" + "NumberOfRooms: " + criteria.NumberOfRooms + "Floor: " + criteria.Floor + "text: " + text);
+
+            if (!string.IsNullOrEmpty(criteria.Floor))
             {
-                // Важно: У CatalogItem должно быть свойство Embedding (векторное представление)
-                // и сервис CatalogAI.GetEmbeddingAsync должен быть доступен.
-                var embeddingVector = await services.CatalogAI.GetEmbeddingAsync(text);
-                // Сортируем по косинусному расстоянию (семантическая близость)
-                query = query.OrderBy(c => c.Embedding.CosineDistance(embeddingVector));
+                query = query.Where(ci => ci.Floor == criteria.Floor);
+                Debug.WriteLine("criteria.Floor.HasValue: query.count() :" + query.Count());
             }
-            else // Если AI-поиск выключен, используем простой поиск по имени
+            if (!string.IsNullOrEmpty(criteria.NumberOfRooms))
             {
-                var searchTextLower = text.ToLower(); // Поиск без учета регистра
-                query = query.Where(ci => ci.Name.ToLower().Contains(searchTextLower));
-                query = query.OrderBy(c => c.Name); // Сортируем по имени
+                query = query.Where(ci => ci.NumberOfRooms == criteria.NumberOfRooms);
+                Debug.WriteLine("criteria.NumberOfRooms.HasValue: query.count() :" + query.Count());
             }
+            // Сюда можно добавить другие фильтры, если расширите QueryCriteria
+
+            if (!string.IsNullOrWhiteSpace(text) && services.CatalogAI.IsEnabled)
+            {
+                // Создаем векторное представление для поискового запроса
+                var vector = await services.CatalogAI.GetEmbeddingAsync(text);
+
+                // Применяем семантическую сортировку к УЖЕ ОТФИЛЬТРОВАННЫМ данным.
+                // OrderBy вычисляет косинусное расстояние и сортирует по нему.
+                query = query.OrderBy(c => c.Embedding.CosineDistance(vector));
+            }
+            else
+            {
+                query = query.OrderBy(c => c.Id);
+            }
+
+            var resultItems = await query.Take(take).ToListAsync();
+
+            return TypedResults.Ok(resultItems);
         }
-        else // Если текст для поиска не указан
+        catch (Exception ex) 
         {
-            // Сортировка по умолчанию (например, по имени)
-            query = query.OrderBy(c => c.Name);
+            Console.WriteLine(ex);
         }
 
-        // 3. Ограничиваем количество результатов
-        var items = await query
-            .Take(take)
-            .ToListAsync();
-
-        // Если ваш CatalogResult - это какой-то специальный класс, здесь нужно будет
-        // преобразовать 'items' в этот класс. Сейчас мы возвращаем просто List<CatalogItem>.
-        return TypedResults.Ok(items); // Возвращаем успешный результат (HTTP 200 OK)
-
+      return TypedResults.Ok(new List<CatalogItem>());
 
     }
 

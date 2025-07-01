@@ -76,10 +76,8 @@ public class CatalogService(HttpClient httpClient) : ICatalogService
 
         var queryStringParts = new List<string>();
 
-        // Параметр 'take' обязателен
         queryStringParts.Add($"take={take}");
 
-        // Добавляем параметры из QueryCriteria, если они заданы
         if (criteria.Floor != null)
         {
             queryStringParts.Add($"Floor={criteria.Floor}");
@@ -109,23 +107,17 @@ public class CatalogService(HttpClient httpClient) : ICatalogService
 
         try
         {
-            // Выполняем GET-запрос и десериализуем ответ
             var result = await httpClient.GetFromJsonAsync<List<CatalogItem>>(requestUri);
-
-            // GetFromJsonAsync обычно возвращает пустой список, если JSON-массив пуст,
-            // а не null. Но для подстраховки можно добавить проверку.
             return result ?? new List<CatalogItem>();
         }
         catch (HttpRequestException ex)
         {
             Debug.WriteLine(ex);
-            throw; // Пример: пробрасываем дальше
+            throw;
         }
         catch (Exception ex)
         {
             Debug.WriteLine(ex);
-            // Обработка других возможных ошибок (например, проблем с десериализацией)
-            // _logger?.LogError(ex, "Неожиданная ошибка при получении отфильтрованных товаров из Catalog API: {RequestUri}", requestUri);
             throw;
         }
     }

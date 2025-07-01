@@ -2,253 +2,350 @@
 @inject NavigationManager Nav
 @inject BasketState Basket
 @inject IProductImageUrlProvider ProductImages
+@inject ILoggerFactory LoggerFactory
+@inject IServiceProvider ServiceProvider
 @attribute [StreamRendering]
 @attribute [Authorize]
+@using eShop.WebApp.Chatbot
+@using eShop.WebApp.Components.Pages.Favourites
+@using Microsoft.AspNetCore.Components.Authorization
+@using Microsoft.Extensions.AI
 
 <PageTitle>Избранное | FlatLyfi</PageTitle>
 <SectionContent SectionName="page-header-title">Избранное</SectionContent>
 
 <div class='cart'>
-    @if (basketItems is null)
-    {
-        <p>Loading...</p>
-    }
-    else if (basketItems.Count == 0)
-    {
-        <p>
-            Ничего не добавлено к сравнению. <a href="">Продолжить поиск квартиры.</a>
-        </p>
-    }
-    else
-    {
-        <div class="cart-summary">
-            <div class="cart-summary-container">
-                <div class="cart-summary-header">
-                    <img role="presentation" src="icons/cart.svg" />
-                    Сравнения
-                    <span class="filter-badge">@TotalQuantity</span>
-                </div>
-                <a href="checkout" class="button button-primary">Получить вывод ИИ</a>
-                <a href="" class="cart-summary-link">
-                    <img role="presentation" src="icons/arrow-left.svg" />
-                    <p>Продолжить поиск квартиры</p>
-                </a>
-            </div>
-        </div>
+	@if (basketItems is null)
+	{
+		<p>Loading...</p>
+	}
+	else if (basketItems.Count == 0)
+	{
+		<p>
+			Ничего не добавлено к сравнению. <a href="">Продолжить поиск квартиры.</a>
+		</p>
+	}
+	else
+	{
+		<div class="cart-summary">
+			<div class="cart-summary-container">
+				<div class="cart-summary-header">
+					<img role="presentation" src="icons/heart.svg" />
+					Сравнения
+					<span class="filter-badge">@TotalQuantity</span>
+				</div>
 
-        <div class='cart-items'>
-            <table>
-                <thead>
-                    <tr>
-                        <th>Квартиры</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <th>@item.ProductName</th>
-                        }
-                    </tr>
-                </thead>
-                <tbody>
-                    <tr>
-                        <th>Фото</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td><img class="table-img" alt="@item.ProductName" src="@ProductImages.GetProductImageUrl(item.ProductId)" /></td>
-                        }
-                    </tr>
+				<form class="get-recomendation" method="post" @formname="get-recomendation" @onsubmit="@GetAIRecommendation" data-enhance="@isAiLoading">
+					<AntiforgeryToken />
 
-                    <tr><th colspan="@(@basketItems.Count() + 1)" style="text-align: center; background: #f0f0f0; font-weight: bold;"><h2>О квартире</h2></th></tr>
+					@if (isAiLoading)
+					{
+						<button type="submit" title="Анализирую, подождите">
+							Анализирую...
+						</button>
+					}
+					else
+					{
+						<button type="submit" title="Получить вывод ИИ">
+							Получить вывод ИИ
+						</button>
+					}
+				</form>
 
-                    <tr>
-                        <th>Количество комнат</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@item.NumberOfRooms</td>
-                        }
-                    </tr>
+				<a href="" class="cart-summary-link">
+					<img role="presentation" src="icons/arrow-left.svg" />
+					<p>Продолжить поиск квартиры</p>
+				</a>
+			</div>
+		</div>
 
-                    <tr>
-                        <th>Общая площадь</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@(item.TotalFloorArea == "не указано" ? "не указано" : item.TotalFloorArea + "\u00A0м²")</td>
-                        }
-                    </tr>
+		@if (!string.IsNullOrEmpty(aiRecommendation))
+		{
+			<div class="card my-4 pt-5 pb-5">
+				<div class="card-header"><strong>Рекомендация Искусственного Интеллекта</strong></div>
+				<div class="card-body" style="white-space: pre-wrap;">
+					@MessageProcessor.ProcessMessageMDContent(aiRecommendation)
+				</div>
+			</div>
+		}
 
-                    <tr>
-                        <th>Площадь кухни</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@(item.KitchenArea == "не указано" ? "не указано" : item.KitchenArea + "\u00A0м²")</td>
-                        }
-                    </tr>
+		<div class='cart-items'>
+			@* ... <table> ... </table> ... *@
+		</div>
 
-                    <tr>
-                        <th>Жилая площадь</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@(item.LivingArea == "не указано" ? "не указано" : item.LivingArea + "\u00A0м²")</td>
-                        }
-                    </tr>
+		<div class='cart-items'>
+			<table>
+				<thead>
+					<tr>
+						<th>Квартиры</th>
+						@foreach (var item in basketItems)
+						{
+							<th>@item.ProductName</th>
+						}
+					</tr>
+				</thead>
+				<tbody>
+					<tr>
+						<th>Фото</th>
+						@foreach (var item in basketItems)
+						{
+							<td><img class="table-img" alt="@item.ProductName" src="@ProductImages.GetProductImageUrl(item.ProductId)" /></td>
+						}
+					</tr>
 
-                    <tr>
-                        <th>Этаж</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@item.Floor из @item.FloorsInTheHouse</td>
-                        }
-                    </tr>
+					<tr><th colspan="@(@basketItems.Count() + 1)" style="text-align: center; background: #f0f0f0; font-weight: bold;"><h2>О квартире</h2></th></tr>
 
-                    <tr>
-                        <th>Санузел</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@item.Bathroom</td>
-                        }
-                    </tr>
+					<tr>
+						<th>Количество комнат</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@item.NumberOfRooms</td>
+						}
+					</tr>
 
-                    <tr>
-                        <th>Ремонт</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@item.Repair</td>
-                        }
-                    </tr>
+					<tr>
+						<th>Общая площадь</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@(item.TotalFloorArea == "не указано" ? "не указано" : item.TotalFloorArea + "\u00A0м²")</td>
+						}
+					</tr>
 
-                    <tr>
-                        <th>Мебель</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@item.Furniture</td>
-                        }
-                    </tr>
+					<tr>
+						<th>Площадь кухни</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@(item.KitchenArea == "не указано" ? "не указано" : item.KitchenArea + "\u00A0м²")</td>
+						}
+					</tr>
 
-                    <tr>
-                        <th>Техника</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@item.Technique</td>
-                        }
-                    </tr>
+					<tr>
+						<th>Жилая площадь</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@(item.LivingArea == "не указано" ? "не указано" : item.LivingArea + "\u00A0м²")</td>
+						}
+					</tr>
 
-                    <tr>
-                        <th>Интернет и ТВ</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@item.InternetAndTV</td>
-                        }
-                    </tr>
+					<tr>
+						<th>Этаж</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@item.Floor из @item.FloorsInTheHouse</td>
+						}
+					</tr>
 
-                    <tr>
-                        <th>Расположение</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>
-                                <span>@item.Address</span>
-                                @if (item.TimeToTheMetro != "не указано")
-                                {
-                                    <div>
-                                        <span>@item.Metro</span>
-                                        <span>@item.TimeToTheMetro</span>
-                                    </div>
-                                }
-                            </td>
-                        }
-                    </tr>
+					<tr>
+						<th>Санузел</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@item.Bathroom</td>
+						}
+					</tr>
 
-                    <tr>
-                        <th>Описание</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@item.Description</td>
-                        }
-                    </tr>
+					<tr>
+						<th>Ремонт</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@item.Repair</td>
+						}
+					</tr>
 
-                    <tr><th colspan="@(@basketItems.Count() + 1)" style="text-align: center; background: #f0f0f0; font-weight: bold;"><h2>О доме</h2></th></tr>
+					<tr>
+						<th>Мебель</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@item.Furniture</td>
+						}
+					</tr>
 
-                    <tr>
-                        <th>Тип дома</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@item.HouseType</td>
-                        }
-                    </tr>
+					<tr>
+						<th>Техника</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@item.Technique</td>
+						}
+					</tr>
 
-                    <tr>
-                        <th>Год постройки</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@item.YearBuilt</td>
-                        }
-                    </tr>
+					<tr>
+						<th>Интернет и ТВ</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@item.InternetAndTV</td>
+						}
+					</tr>
 
-                    <tr>
-                        <th>Этажей в доме</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@item.FloorsInTheHouse</td>
-                        }
-                    </tr>
+					<tr>
+						<th>Расположение</th>
+						@foreach (var item in basketItems)
+						{
+							<td>
+								<span>@item.Address</span>
+								@if (item.TimeToTheMetro != "не указано")
+								{
+									<div>
+										<span>@item.Metro</span>
+										<span>@item.TimeToTheMetro</span>
+									</div>
+								}
+							</td>
+						}
+					</tr>
 
-                    <tr>
-                        <th>Пассажирский лифт</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@item.PassengerElevator</td>
-                        }
-                    </tr>
+					<tr>
+						<th>Описание</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@item.Description</td>
+						}
+					</tr>
 
-                    <tr>
-                        <th>Грузовой лифт</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@item.FreightElevator</td>
-                        }
-                    </tr>
+					<tr><th colspan="@(@basketItems.Count() + 1)" style="text-align: center; background: #f0f0f0; font-weight: bold;"><h2>О доме</h2></th></tr>
 
-                    <tr>
-                        <th>Парковка</th>
-                        @foreach (var item in basketItems)
-                        {
-                            <td>@item.Parking</td>
-                        }
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    }
+					<tr>
+						<th>Тип дома</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@item.HouseType</td>
+						}
+					</tr>
+
+					<tr>
+						<th>Год постройки</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@item.YearBuilt</td>
+						}
+					</tr>
+
+					<tr>
+						<th>Этажей в доме</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@item.FloorsInTheHouse</td>
+						}
+					</tr>
+
+					<tr>
+						<th>Пассажирский лифт</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@item.PassengerElevator</td>
+						}
+					</tr>
+
+					<tr>
+						<th>Грузовой лифт</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@item.FreightElevator</td>
+						}
+					</tr>
+
+					<tr>
+						<th>Парковка</th>
+						@foreach (var item in basketItems)
+						{
+							<td>@item.Parking</td>
+						}
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	}
 </div>
 
 <form @formname="update-cart" @onsubmit="@UpdateQuantityAsync"></form>
 
 @code {
-    private IReadOnlyCollection<BasketItem>? basketItems;
+	private IReadOnlyCollection<BasketItem>? basketItems;
 
-    [SupplyParameterFromForm]
-    public int? UpdateQuantityId { get; set; }
+	private bool isAiLoading = false;
+	private string? aiRecommendation;
+	private IChatClient? _chatClient;
+	private ChatOptions _chatOptions = new();
 
-    [SupplyParameterFromForm]
-    public int? UpdateQuantityValue { get; set; }
+	[SupplyParameterFromForm]
+	public int? UpdateQuantityId { get; set; }
 
-    protected override async Task OnInitializedAsync()
-    {
-        basketItems = await Basket.GetBasketItemsAsync();
-    }
+	[SupplyParameterFromForm]
+	public int? UpdateQuantityValue { get; set; }
 
-    private decimal? TotalPrice => basketItems?.Sum(i => i.Quantity * i.UnitPrice);
-    private decimal? TotalQuantity => basketItems?.Sum(i => i.Quantity);
+	protected override async Task OnInitializedAsync()
+	{
+		basketItems = await Basket.GetBasketItemsAsync();
+		// получаем IChatClient из контейнера
+		_chatClient = ServiceProvider.GetService<IChatClient>();
+		if (_chatClient is not null)
+		{
+			// здесь можно настроить инструменты, если нужны:
+			// _chatOptions = new ChatOptions { Tools = { /* … */ } };
+		}
 
-    // While an update post is in process, we want to show the pending quantity, not the one
-    // that is committed to the cart (otherwise the UI briefly shows the old data)
-    private int CurrentOrPendingQuantity(int productId, int cartQuantity)
-        => UpdateQuantityId.GetValueOrDefault(-1) == productId
-        ? UpdateQuantityValue!.Value
-        : cartQuantity;
+	}
 
-    private async Task UpdateQuantityAsync()
-    {
-        var id = UpdateQuantityId!.Value;
-        var quantity = UpdateQuantityValue!.Value;
-        await Basket.SetQuantityAsync(id, quantity);
-        basketItems = await Basket.GetBasketItemsAsync();
-    }
+	private decimal? TotalPrice => basketItems?.Sum(i => i.Quantity * i.UnitPrice);
+	private decimal? TotalQuantity => basketItems?.Sum(i => i.Quantity);
+
+	// While an update post is in process, we want to show the pending quantity, not the one
+	// that is committed to the cart (otherwise the UI briefly shows the old data)
+	private int CurrentOrPendingQuantity(int productId, int cartQuantity)
+		=> UpdateQuantityId.GetValueOrDefault(-1) == productId
+		? UpdateQuantityValue!.Value
+		: cartQuantity;
+
+	private async Task UpdateQuantityAsync()
+	{
+		var id = UpdateQuantityId!.Value;
+		var quantity = UpdateQuantityValue!.Value;
+		await Basket.SetQuantityAsync(id, quantity);
+		basketItems = await Basket.GetBasketItemsAsync();
+	}
+
+	private async Task GetAIRecommendation()
+	{
+		if (_chatClient is null || basketItems is null || !basketItems.Any())
+			return;
+
+		isAiLoading = true;
+		aiRecommendation = null;
+
+		try
+		{
+			// 1) Собираем промпт
+			var sb = new System.Text.StringBuilder();
+			sb.AppendLine("Ты — эксперт по аренде жилья. Помоги выбрать лучшую квартиру из списка:");
+			int idx = 1;
+			foreach (var i in basketItems)
+			{
+				sb.AppendLine($"{idx++}. {i.ProductName}: {i.NumberOfRooms} комн., {i.TotalFloorArea}м², этаж {i.Floor}/{i.FloorsInTheHouse}, ремонт {i.Repair}, мебель {i.Furniture}, адрес {i.Address}, метро {i.Metro} за {i.TimeToTheMetro}. Описание: {i.Description}.");
+			}
+			sb.AppendLine("Дай развёрнутый совет, какую выбрать и почему. Так же отдельно выдели на что стоит обратить внимание.");
+
+			// 2) Упаковываем в сообщения
+			var messages = new List<ChatMessage>
+			{
+				new ChatMessage(ChatRole.System,  @"
+				Вы — ассистент службы поддержки FlatLyfi.
+				Отвечаете только по квартирам из каталога.
+				"),
+				new ChatMessage(ChatRole.User, sb.ToString())
+			};
+
+			// 3) Делаем запрос
+			var response = await _chatClient.GetResponseAsync(messages, _chatOptions);
+			aiRecommendation = response.Text?.Trim();
+		}
+		catch (Exception ex)
+		{
+			var logger = LoggerFactory.CreateLogger("Favourites");
+			logger.LogError(ex, "Ошибка при запросе ИИ-рекомендации");
+			aiRecommendation = "Не удалось получить рекомендацию ИИ. Попробуйте позже.";
+		}
+		finally
+		{
+			isAiLoading = false;
+		}
+	}
+
 }

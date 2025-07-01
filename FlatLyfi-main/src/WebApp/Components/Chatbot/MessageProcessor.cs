@@ -2,6 +2,7 @@
 using System.Text.Encodings.Web;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.Components;
+using Markdig;
 
 namespace eShop.WebApp.Chatbot;
 
@@ -67,4 +68,16 @@ public static partial class MessageProcessor
     // Группа 3 ([^\)]+): Захватывает URL внутри круглых скобок.
     [GeneratedRegex(@"(!?)\[([^\]]*)\]\s*\(([^\)]+)\)")]
     private static partial Regex FindMarkdownLinksAndImages();
+
+    public static MarkupString ProcessMessageMDContent(string message)
+    {
+        if (string.IsNullOrEmpty(message))
+            return new MarkupString("");
+
+        // Преобразуем Markdown в HTML
+        var html = Markdown.ToHtml(message);
+
+        // Возвращаем как MarkupString для Blazor
+        return new MarkupString(html);
+    }
 }

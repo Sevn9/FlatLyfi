@@ -177,7 +177,7 @@ public class ChatState
         }
     }
 
-    [Description("Gets information about the contents of the user's shopping cart (basket)")]
+    [Description("Gets information about the contents of the user's favorites (basket)")]
     private async Task<string> GetCartContents()
     {
         try
